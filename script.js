@@ -20,6 +20,11 @@ window.onload = function () {
   const keyboard = document.createElement('div');
   keyboard.classList.add('keyboard');
   document.body.append(keyboard);
+  const text = document.createElement('div');
+  text.classList.add('text');
+  text.innerHTML =
+    'Клавиатура создана в операционной системе Windows<br>Для переключения языка комбинация: левыe ctrl + alt';
+  document.body.append(text);
   const row1 = [
     ['Backquote', '`', '~', 'ё', 'Ё'],
     ['Digit1', '1', '!', '1', '!'],
@@ -167,7 +172,6 @@ window.onload = function () {
           localStorage.setItem('language', 'en');
           lang = 'en';
         }
-        console.log(lang);
       };
       this.switchCase = () => {
         if (lang === 'en') {
@@ -180,16 +184,16 @@ window.onload = function () {
             this.curSpan = engChar;
             this.engShiftChar.className = 'hide';
           }
-          if (lang === 'ru') {
-            if (this.ruChar.className === 'show') {
-              this.ruChar.className = 'hide';
-              this.ruShiftChar.className = 'show';
-              this.curSpan = ruShiftChar;
-            } else {
-              this.ruChar.className = 'show';
-              this.curSpan = ruChar;
-              this.ruShiftChar.className = 'hide';
-            }
+        }
+        if (lang === 'ru') {
+          if (this.ruChar.className === 'show') {
+            this.ruChar.className = 'hide';
+            this.ruShiftChar.className = 'show';
+            this.curSpan = ruShiftChar;
+          } else {
+            this.ruChar.className = 'show';
+            this.curSpan = ruChar;
+            this.ruShiftChar.className = 'hide';
           }
         }
       };
@@ -206,11 +210,99 @@ window.onload = function () {
   for (let i = 0; i < 5; i += 1) {
     const keyboardRow = rows[i];
     const key = [...rowKeys[i]];
-    allKeys.push(...keyboardRow);
     for (let j = 0; j < keyboardRow.length; j += 1) {
       key[j] = new Key(...keyboardRow[j], row[i]);
       key[j].createKey();
+      allKeys.push(key[j]);
     }
   }
-  console.log(allKeys);
+  let shiftDown = false;
+  let capsOn = false;
+  document.addEventListener('keydown', (e) => {
+    console.log(textarea.selectionStart);
+    allKeys.forEach((x) => {
+      if (e.code === x.name) {
+        if (e.code === 'CapsLock') {
+          if (!capsOn) {
+            x.div.style.background = 'blue';
+            x.div.style.transform = 'scale(0.9)';
+            capsOn = true;
+            for (let i = 13; i < allKeys.length; i += 1) {
+              allKeys[i].switchCase();
+            }
+          } else if (capsOn) {
+            x.div.style.background = 'black';
+            x.div.style.transform = 'scale(1)';
+            capsOn = false;
+            for (let i = 13; i < allKeys.length; i += 1) {
+              allKeys[i].switchCase();
+            }
+          }
+          return;
+        }
+        x.div.style.background = 'blue';
+        x.div.style.transform = 'scale(0.9)';
+        if (e.altKey && (e.metaKey || e.ctrlKey)) {
+          allKeys.forEach((item) => {
+            item.switchLanguage();
+          });
+        }
+        if (e.code === 'Tab') {
+          e.preventDefault();
+          textarea.value += '\t';
+        } else if (e.code === 'Enter') {
+          e.preventDefault();
+          textarea.value += '\n';
+        } else if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+          if (!shiftDown) {
+            shiftDown = true;
+            allKeys.forEach((item) => {
+              item.switchCase();
+            });
+          }
+        } else if (e.code === 'Delete') {
+          e.preventDefault();
+          textarea.value = textarea.value.substr(1, textarea.value.length);
+        } else if (e.code === 'Backspace') {
+          e.preventDefault();
+          textarea.value = textarea.value.substr(0, textarea.value.length - 1);
+        } else if (e.code === 'ControlLeft' || e.code === 'ControlRight') {
+          e.preventDefault();
+        } else if (e.code === 'AltLeft' || e.code === 'AltRight') {
+          e.preventDefault();
+        } else if (e.target !== textarea) {
+          textarea.value += x.curSpan;
+        }
+        textarea.autofocus = true;
+      }
+    });
+  });
+  document.addEventListener('keyup', (e) => {
+    allKeys.forEach((x) => {
+      if (e.code === x.name) {
+        if (e.code !== 'CapsLock') {
+          x.div.style.background = 'black';
+          x.div.style.transform = 'scale(1)';
+          if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+            shiftDown = false;
+            allKeys.forEach((item) => {
+              item.switchCase();
+            });
+          }
+        }
+      }
+    });
+  });
+  let clickTarget = '';
+  document.addEventListener('mousedown', (e) => {
+    const event = new Event('keydown');
+    event.code = e.target.id;
+    clickTarget = e.target.id;
+    document.dispatchEvent(event);
+  });
+  document.addEventListener('mouseup', () => {
+    const event = new Event('keyup');
+    event.code = clickTarget;
+    document.dispatchEvent(event);
+  });
 };
