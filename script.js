@@ -20,11 +20,11 @@ window.onload = function () {
   const keyboard = document.createElement('div');
   keyboard.classList.add('keyboard');
   document.body.append(keyboard);
-  const text = document.createElement('div');
-  text.classList.add('text');
-  text.innerHTML =
+  const explanation = document.createElement('div');
+  explanation.classList.add('explanation');
+  explanation.innerHTML =
     'Клавиатура создана в операционной системе Windows<br>Для переключения языка комбинация: левыe ctrl + alt';
-  document.body.append(text);
+  document.body.append(explanation);
   const row1 = [
     ['Backquote', '`', '~', 'ё', 'Ё'],
     ['Digit1', '1', '!', '1', '!'],
@@ -216,10 +216,42 @@ window.onload = function () {
       allKeys.push(key[j]);
     }
   }
+  function typeInTextarea(newText) {
+    if (newText === 'Delete') {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const before = text.substring(0, start);
+      const after = text.substring(end + 1, text.length);
+      textarea.value = before + after;
+      textarea.selectionStart = start + newText.length;
+      textarea.selectionEnd = start + newText.length;
+      textarea.setSelectionRange(start, start);
+    } else if (newText === 'Backspace') {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const before = text.substring(0, start - 1);
+      const after = text.substring(end, text.length);
+      textarea.value = before + after;
+      textarea.selectionStart = start + newText.length;
+      textarea.selectionEnd = start + newText.length;
+      textarea.setSelectionRange(start - 1, start - 1);
+    } else {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const before = text.substring(0, start);
+      const after = text.substring(end, text.length);
+      textarea.value = before + newText + after;
+      textarea.selectionStart = start + newText.length;
+      textarea.selectionEnd = start + newText.length;
+      textarea.focus();
+    }
+  }
   let shiftDown = false;
   let capsOn = false;
   document.addEventListener('keydown', (e) => {
-    console.log(textarea.selectionStart);
     allKeys.forEach((x) => {
       if (e.code === x.name) {
         if (e.code === 'CapsLock') {
@@ -249,10 +281,10 @@ window.onload = function () {
         }
         if (e.code === 'Tab') {
           e.preventDefault();
-          textarea.value += '\t';
+          typeInTextarea('\t');
         } else if (e.code === 'Enter') {
           e.preventDefault();
-          textarea.value += '\n';
+          typeInTextarea('\n');
         } else if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
           if (!shiftDown) {
             shiftDown = true;
@@ -262,18 +294,34 @@ window.onload = function () {
           }
         } else if (e.code === 'Delete') {
           e.preventDefault();
-          textarea.value = textarea.value.substr(1, textarea.value.length);
+          typeInTextarea('Delete');
+          // textarea.value = textarea.value.substr(1, textarea.value.length);
         } else if (e.code === 'Backspace') {
           e.preventDefault();
-          textarea.value = textarea.value.substr(0, textarea.value.length - 1);
+          typeInTextarea('Backspace');
+          // textarea.value = textarea.value.substr(0, textarea.value.length - 1);
         } else if (e.code === 'ControlLeft' || e.code === 'ControlRight') {
           e.preventDefault();
         } else if (e.code === 'AltLeft' || e.code === 'AltRight') {
           e.preventDefault();
-        } else if (e.target !== textarea) {
-          textarea.value += x.curSpan;
+        } else if (
+          e.code === 'ArrowUp' ||
+          e.code === 'ArrowLeft' ||
+          e.code === 'ArrowRight' ||
+          e.code === 'ArrowDown'
+        ) {
+          if (!e.isTrusted) {
+            e.preventDefault();
+            textarea.focus();
+            document.dispatchEvent(
+              new KeyboardEvent('keydown', { key: 'up arrow' })
+            );
+            textarea.focus();
+          }
+        } else {
+          e.preventDefault();
+          typeInTextarea(x.curSpan);
         }
-        textarea.autofocus = true;
       }
     });
   });
