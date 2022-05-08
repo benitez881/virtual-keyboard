@@ -1,4 +1,4 @@
-window.onload = function () {
+window.onload = function keyboard() {
   if (localStorage.getItem('language') === null) {
     localStorage.setItem('language', 'en');
   }
@@ -253,18 +253,19 @@ window.onload = function () {
   let capsOn = false;
   document.addEventListener('keydown', (e) => {
     allKeys.forEach((x) => {
+      const el = x;
       if (e.code === x.name) {
         if (e.code === 'CapsLock') {
           if (!capsOn) {
-            x.div.style.background = 'blue';
-            x.div.style.transform = 'scale(0.9)';
+            el.div.style.background = 'blue';
+            el.div.style.transform = 'scale(0.9)';
             capsOn = true;
             for (let i = 13; i < allKeys.length; i += 1) {
               allKeys[i].switchCase();
             }
           } else if (capsOn) {
-            x.div.style.background = 'black';
-            x.div.style.transform = 'scale(1)';
+            el.div.style.background = 'black';
+            el.div.style.transform = 'scale(1)';
             capsOn = false;
             for (let i = 13; i < allKeys.length; i += 1) {
               allKeys[i].switchCase();
@@ -272,8 +273,8 @@ window.onload = function () {
           }
           return;
         }
-        x.div.style.background = 'blue';
-        x.div.style.transform = 'scale(0.9)';
+        el.div.style.background = 'blue';
+        el.div.style.transform = 'scale(0.9)';
         if (e.altKey && (e.metaKey || e.ctrlKey)) {
           allKeys.forEach((item) => {
             item.switchLanguage();
@@ -311,10 +312,11 @@ window.onload = function () {
   });
   document.addEventListener('keyup', (e) => {
     allKeys.forEach((x) => {
+      const el = x;
       if (e.code === x.name) {
         if (e.code !== 'CapsLock') {
-          x.div.style.background = 'black';
-          x.div.style.transform = 'scale(1)';
+          el.div.style.background = 'black';
+          el.div.style.transform = 'scale(1)';
           if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
             shiftDown = false;
             allKeys.forEach((item) => {
