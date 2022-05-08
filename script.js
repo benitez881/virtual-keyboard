@@ -1,4 +1,4 @@
-window.onload = function keyboard() {
+window.onload = function vKeyboard() {
   if (localStorage.getItem('language') === null) {
     localStorage.setItem('language', 'en');
   }
