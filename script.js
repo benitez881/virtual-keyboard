@@ -23,7 +23,7 @@ window.onload = function () {
   const explanation = document.createElement('div');
   explanation.classList.add('explanation');
   explanation.innerHTML =
-    'Клавиатура создана в операционной системе Windows<br>Для переключения языка комбинация: левыe ctrl + alt';
+    'Клавиатура создана в операционной системе Windows<br>Для переключения языка комбинация: ctrl + alt';
   document.body.append(explanation);
   const row1 = [
     ['Backquote', '`', '~', 'ё', 'Ё'],
@@ -85,7 +85,7 @@ window.onload = function () {
     ['Comma', ',', '<', 'б', 'Б'],
     ['Period', '.', '>', 'ю', 'Ю'],
     ['Slash', '/', '?', '.', ','],
-    ['ArrowUp', '	&uarr;', '&uarr;', '&uarr;', '&uarr;'],
+    ['ArrowUp', '↑', '↑', '↑', '↑'],
     ['ShiftRight', 'Shift', 'Shift', 'Shift', 'Shift'],
   ];
   const row5 = [
@@ -95,9 +95,9 @@ window.onload = function () {
     ['Space', ' ', ' ', ' ', ' '],
     ['AltRight', 'Alt', 'Alt', 'Alt', 'Alt'],
     ['ControlRight', 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl'],
-    ['ArrowLeft', '&larr;', '&larr;', '&larr;', '&larr;'],
-    ['ArrowDown', '&darr;', '&darr;', '&darr;', '&darr;'],
-    ['ArrowRight', '&rarr;', '&rarr;', '&rarr;', '&rarr;'],
+    ['ArrowLeft', '←', '←', '←', '←'],
+    ['ArrowDown', '↓', '↓', '↓', '↓'],
+    ['ArrowRight', '→', '→', '→', '→'],
   ];
   const row = [];
   for (let i = 0; i < 5; i += 1) {
@@ -295,29 +295,13 @@ window.onload = function () {
         } else if (e.code === 'Delete') {
           e.preventDefault();
           typeInTextarea('Delete');
-          // textarea.value = textarea.value.substr(1, textarea.value.length);
         } else if (e.code === 'Backspace') {
           e.preventDefault();
           typeInTextarea('Backspace');
-          // textarea.value = textarea.value.substr(0, textarea.value.length - 1);
         } else if (e.code === 'ControlLeft' || e.code === 'ControlRight') {
           e.preventDefault();
         } else if (e.code === 'AltLeft' || e.code === 'AltRight') {
           e.preventDefault();
-        } else if (
-          e.code === 'ArrowUp' ||
-          e.code === 'ArrowLeft' ||
-          e.code === 'ArrowRight' ||
-          e.code === 'ArrowDown'
-        ) {
-          if (!e.isTrusted) {
-            e.preventDefault();
-            textarea.focus();
-            document.dispatchEvent(
-              new KeyboardEvent('keydown', { key: 'up arrow' })
-            );
-            textarea.focus();
-          }
         } else {
           e.preventDefault();
           typeInTextarea(x.curSpan);

@@ -139,6 +139,9 @@ body {
   width: fit-content;
   margin: 10px;
 }
+.textarea textarea {
+  background-color: azure;
+}
 .keyboard {
   background-color: rgb(193, 191, 191);
   width: fit-content;
