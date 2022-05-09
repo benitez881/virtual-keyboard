@@ -179,6 +179,10 @@ body {
   align-items: center;
   transition: transform 0.1s;
 }
+.key:hover {
+  background: rgb(70, 70, 70);
+  transition: 0.3s;
+}
 .hide {
   display: none;
 }
